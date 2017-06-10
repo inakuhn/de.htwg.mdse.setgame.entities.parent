@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: de.htwg.mdse.setgame.entities.ide
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: de.htwg.mdse.setgame.entities.ide; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: de.htwg.mdse.setgame.entities,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide,
+ org.antlr.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.htwg.mdse.setgame.entities.ide.contentassist.antlr.internal,
+ de.htwg.mdse.setgame.entities.ide.contentassist.antlr
+

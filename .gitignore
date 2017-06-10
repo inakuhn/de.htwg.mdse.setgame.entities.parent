@@ -1,0 +1,33 @@
+#################################################################################
+# Eclipse IGNORE
+#################################################################################
+# Eclipse
+.classpath
+.project
+.settings/
+.lauch
+# to under porjects
+*/.classpath
+*/.project
+*/.settings/
+*/.lauch
+
+
+
+# Maven
+log/
+target/
+# Maven Under Priejcts
+*/log/
+*/target/
+#################################################################################
+# Xtext IGNORE
+#################################################################################
+*/bin
+*/target
+*/generated
+*/generated-sources
+*/src-gen
+*/xtend-gen
+*/.antlr-generator-*.jar
+*/.DS_Store

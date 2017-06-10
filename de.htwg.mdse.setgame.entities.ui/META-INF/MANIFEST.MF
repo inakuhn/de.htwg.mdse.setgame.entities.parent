@@ -1,0 +1,25 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: de.htwg.mdse.setgame.entities.ui
+Bundle-Vendor: My Company
+Bundle-Version: 1.0.0.qualifier
+Bundle-SymbolicName: de.htwg.mdse.setgame.entities.ui; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: de.htwg.mdse.setgame.entities,
+ de.htwg.mdse.setgame.entities.ide,
+ org.eclipse.xtext.ui,
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.ui,
+ org.eclipse.compare,
+ org.eclipse.xtext.builder,
+ org.eclipse.xtend.lib;resolution:=optional,
+ org.eclipse.xtext.xbase.lib
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.htwg.mdse.setgame.entities.ui.contentassist,
+ de.htwg.mdse.setgame.entities.ui.quickfix,
+ de.htwg.mdse.setgame.entities.ui.internal
+Bundle-Activator: de.htwg.mdse.setgame.entities.ui.internal.EntitiesActivator

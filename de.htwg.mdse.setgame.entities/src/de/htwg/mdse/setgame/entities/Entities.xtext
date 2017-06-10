@@ -1,0 +1,9 @@
+grammar de.htwg.mdse.setgame.entities.Entities with org.eclipse.xtext.common.Terminals
+
+generate entities "http://www.htwg.de/mdse/setgame/entities/Entities"
+
+Model:
+	greetings+=Attribute*;
+	
+Attribute:
+	'Hello' name=ID '!';
