@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.htwg.mdse.setgame.entities.entities.CardAttribute
+import de.htwg.mdse.setgame.entities.entities.Attributes
 
 /**
  * Generates code from your model files on save.
@@ -17,10 +17,40 @@ import de.htwg.mdse.setgame.entities.entities.CardAttribute
 class EntitiesGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-			resource.allContents
-				.filter(CardAttribute)
-				.map[features]
-				.join(', '))
+  for(e: resource.allContents.toIterable.filter(Attributes)) {
+
+    fsa.generateFile(
+      "CardAttribute.java",
+      e.compile)
+  }
 	}
+def compile(Attributes e) '''
+
+public final class CardAttribute {
+    private CardAttribute(){
+    }«FOR c: e.cardAttributes»
+    public static int FIELDSIZE = 0;
+    private static final String[] «c.name» = [«FOR f:c.features  SEPARATOR ', '»"«f»"«ENDFOR»]
+«ENDFOR»
+    static {
+        attributeNameAndFeature = new HashMap<String, List<String>>();
+        «FOR c: e.cardAttributes»
+        addNewAttribute(«c.name», "«c.name»");
+         addToFieldSize(«c.name»);
+        «ENDFOR»
+    }
+    private static void addNewAttribute(String[] array,String name){
+        attributeNameAndFeature.put(name, new LinkedList<String>());
+        addArray(array, name);
+    }
+    private static void addArray(String[] array, String name){
+        for(String v : array){
+            attributeNameAndFeature.get(name).add(v);
+        }
+    }
+    private static void addToFieldSize(String[] array){
+        FIELDSIZE = FIELDSIZE * array.length;
+    }
+}
+'''
 }

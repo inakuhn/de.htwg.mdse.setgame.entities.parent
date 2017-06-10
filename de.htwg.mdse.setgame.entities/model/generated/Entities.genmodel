@@ -6,8 +6,9 @@
     complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.12">
   <genPackages prefix="Entities" basePackage="de.htwg.mdse.setgame.entities" disposableProviderFactory="true"
       fileExtensions="entities" ecorePackage="Entities.ecore#/">
-    <genClasses ecoreClass="Entities.ecore#//Model">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Entities.ecore#//Model/greetings"/>
+    <genClasses ecoreClass="Entities.ecore#//Model"/>
+    <genClasses ecoreClass="Entities.ecore#//Attributes">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Entities.ecore#//Attributes/cardAttributes"/>
     </genClasses>
     <genClasses ecoreClass="Entities.ecore#//CardAttribute">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Entities.ecore#//CardAttribute/name"/>
