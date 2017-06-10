@@ -4,8 +4,8 @@
 package de.htwg.mdse.setgame.entities.validation
 
 import org.eclipse.xtext.validation.Check
-import de.htwg.mdse.setgame.entities.entities.Greeting
 import de.htwg.mdse.setgame.entities.entities.EntitiesPackage
+import de.htwg.mdse.setgame.entities.entities.CardAttribute
 
 /**
  * This class contains custom validation rules. 
@@ -17,10 +17,10 @@ class EntitiesValidator extends AbstractEntitiesValidator {
 	public static val INVALID_NAME = 'invalidName'
 
 	@Check
-	def checkGreetingStartsWithCapital(Greeting greeting) {
+	def checkGreetingStartsWithCapital(CardAttribute greeting) {
 		if (!Character.isUpperCase(greeting.name.charAt(0))) {
 			warning('Name should start with a capital', 
-					EntitiesPackage.Literals.GREETING__NAME,
+					EntitiesPackage.Literals.CARD_ATTRIBUTE__NAME,
 					INVALID_NAME)
 		}
 	}

@@ -9,8 +9,13 @@
     <genClasses ecoreClass="Entities.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Entities.ecore#//Model/greetings"/>
     </genClasses>
-    <genClasses ecoreClass="Entities.ecore#//Greeting">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Entities.ecore#//Greeting/name"/>
+    <genClasses ecoreClass="Entities.ecore#//CardAttribute">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Entities.ecore#//CardAttribute/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Entities.ecore#//CardAttribute/features"/>
+    </genClasses>
+    <genClasses ecoreClass="Entities.ecore#//Feature">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Entities.ecore#//Feature/many"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Entities.ecore#//Feature/name"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

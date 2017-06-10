@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.htwg.mdse.setgame.entities.entities.Greeting
+import de.htwg.mdse.setgame.entities.entities.CardAttribute
 
 /**
  * Generates code from your model files on save.
@@ -19,8 +19,8 @@ class EntitiesGenerator extends AbstractGenerator {
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		fsa.generateFile('greetings.txt', 'People to greet: ' + 
 			resource.allContents
-				.filter(Greeting)
-				.map[name]
+				.filter(CardAttribute)
+				.map[features]
 				.join(', '))
 	}
 }
