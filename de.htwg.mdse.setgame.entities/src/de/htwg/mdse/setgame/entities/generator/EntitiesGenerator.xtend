@@ -26,17 +26,24 @@ class EntitiesGenerator extends AbstractGenerator {
 	}
 def compile(Attributes e) '''
 
+package de.htwg.se.setgame.model.impl.atributte;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 public final class CardAttribute {
     private CardAttribute(){
-    }«FOR c: e.cardAttributes»
+    }
     public static int FIELDSIZE = 0;
+    «FOR c: e.cardAttributes»
     private static final String[] «c.name» = [«FOR f:c.features  SEPARATOR ', '»"«f»"«ENDFOR»]
 «ENDFOR»
     static {
         attributeNameAndFeature = new HashMap<String, List<String>>();
         «FOR c: e.cardAttributes»
         addNewAttribute(«c.name», "«c.name»");
-         addToFieldSize(«c.name»);
+        addToFieldSize(«c.name»);
         «ENDFOR»
     }
     private static void addNewAttribute(String[] array,String name){
