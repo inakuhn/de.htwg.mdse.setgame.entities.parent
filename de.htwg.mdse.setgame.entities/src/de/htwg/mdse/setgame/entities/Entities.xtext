@@ -3,7 +3,8 @@ grammar de.htwg.mdse.setgame.entities.Entities with org.eclipse.xtext.common.Ter
 generate entities "http://www.htwg.de/mdse/setgame/entities/Entities"
 
 Model:
-	greetings+=CardAttribute*;
+	//One or More Card Attributes
+	cardAttributes+=CardAttribute+;
 	
 CardAttribute:
 	'CardAttribute' name=ID '{'
