@@ -7,8 +7,5 @@ Model:
 	
 CardAttribute:
 	'CardAttribute' name=ID '{'
-        (features+=Feature)*
+        (features+=STRING)*
     '}';
-	
-Feature:
-    (many?='many')? name=ID ':' STRING;
