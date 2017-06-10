@@ -8,5 +8,5 @@ Model:
 	
 CardAttribute:
 	'CardAttribute' name=ID '{'
-        (features+=STRING)*
+        (features+=STRING)+
     '}';
