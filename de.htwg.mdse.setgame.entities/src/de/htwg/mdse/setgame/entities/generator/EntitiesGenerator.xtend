@@ -3,11 +3,11 @@
  */
 package de.htwg.mdse.setgame.entities.generator
 
+import de.htwg.mdse.setgame.entities.entities.Attributes
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.htwg.mdse.setgame.entities.entities.Attributes
 
 /**
  * Generates code from your model files on save.
@@ -17,14 +17,18 @@ import de.htwg.mdse.setgame.entities.entities.Attributes
 class EntitiesGenerator extends AbstractGenerator {
 
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-  for(e: resource.allContents.toIterable.filter(Attributes)) {
+		for (e : resource.allContents.toIterable.filter(Attributes)) {
 
-    fsa.generateFile(
-      "CardAttribute.java",
-      e.compile)
-  }
+			fsa.generateFile("CardAttribute.java", e.compile)
+			fsa.generateFile("PackProvider.java", e.packprovide)
+			fsa.generateFile("ICard.java", e.icardgenerator)
+			fsa.generateFile("Card.java", e.cardgenerator)
+			fsa.generateFile("Field.java", e.fieldgenerator)
+			fsa.generateFile("SetService.java", e.servicegenerator)
+		}
 	}
-def compile(Attributes e) '''
+
+	def compile(Attributes e) '''
 
 package de.htwg.se.setgame.model.impl.atributte;
 
@@ -35,13 +39,14 @@ import java.util.Map;
 public final class CardAttribute {
     private CardAttribute(){
     }
-    public static int FIELDSIZE = 0;
-    «FOR c: e.cardAttributes»
-    private static final String[] «c.name» = [«FOR f:c.features  SEPARATOR ', '»"«f»"«ENDFOR»]
+    public static int FIELDSIZE = 1;
+    public static Map<String,List<String>> attributeNameAndFeature;
+    «FOR c : e.cardAttributes»
+    private static final String[] «c.name» = {«FOR f:c.features  SEPARATOR ', '»"«f.name»"«ENDFOR»};
 «ENDFOR»
     static {
-        attributeNameAndFeature = new HashMap<String, List<String>>();
-        «FOR c: e.cardAttributes»
+    	attributeNameAndFeature = new HashMap<>();
+        «FOR c : e.cardAttributes»
         addNewAttribute(«c.name», "«c.name»");
         addToFieldSize(«c.name»);
         «ENDFOR»
@@ -58,6 +63,306 @@ public final class CardAttribute {
     private static void addToFieldSize(String[] array){
         FIELDSIZE = FIELDSIZE * array.length;
     }
+}
+'''
+
+	def packprovide(Attributes e) '''
+package de.htwg.se.setgame.controller.impl.logic.impl;
+
+
+import de.htwg.se.setgame.model.ICard;
+import de.htwg.se.setgame.model.IModelFactory;
+import de.htwg.se.setgame.model.IPack;
+import de.htwg.se.setgame.model.impl.atributte.CardAttribute;
+
+import java.util.*;
+
+/**
+ * Created by raina on 03.06.2015.
+ */
+public class PackProvider {
+
+
+    /*Instance variable*/
+    private IModelFactory modelFactory;
+    private IPack pack;
+    private List<ICard> results = new LinkedList<>();
+    private int count = 0;
+    /**
+     * Construct for card
+     */
+    public PackProvider(IModelFactory modelFactory) {
+        this.modelFactory = modelFactory;
+        this.pack = modelFactory.createPack();
+        List<ICard> cards = new LinkedList<ICard>();
+        cards = Arrays.asList(creatCards());
+        if (cards != null) {
+            this.pack.setPack(cards);
+        }
+    }
+    
+    /**
+     * @return the finish pack of the Game
+     */
+    private ICard[] creatCards() {
+        ICard list[] = new ICard[CardAttribute.FIELDSIZE];
+        int numberOfAttribute = CardAttribute.attributeNameAndFeature.values().size();
+        createCards(new ArrayList(CardAttribute.attributeNameAndFeature.keySet()), new ArrayList(CardAttribute.attributeNameAndFeature.values()),
+                new HashMap<>(), numberOfAttribute - 1);
+        for (int i = 0; i < list.length; i++) {
+            list[i] = results.get(i);
+        }
+        return list;
+    }
+    private void createCards(List<String> attributeName, List<List<String>> eingeschaften, Map<String, String> attribute, int level) {
+        if (level == -1) {
+			ICard card = modelFactory.createCard();«FOR c : e.cardAttributes»
+			card.set«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»(attribute.get("«c.name»"));«ENDFOR»
+            results.add(card);
+        } else {
+            for (String s : eingeschaften.get(level)) {
+                attribute.put(attributeName.get(level), s);
+                createCards(attributeName, eingeschaften, attribute, level - 1);
+            }
+        }
+    }
+    public IPack getPack() {
+        return this.pack;
+    }
+    /**
+     * @return pack of cards
+     */
+
+}
+
+'''
+
+	def icardgenerator(Attributes e) '''
+public interface ICard {
+	«FOR c : e.cardAttributes»
+	 /**
+	 * @return «c.name»
+	 */
+	String get«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»();
+    /**
+     *
+     * @param «c.name» of card
+     */
+    void set«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1) »(String «c.name»);
+    «ENDFOR»
+    /**
+	 * @param card 
+	 * @return true if card is the same
+	 */
+	boolean compareTo(ICard card);
+
+}
+
+'''
+
+	def cardgenerator(Attributes e) '''
+package de.htwg.se.setgame.model.impl;
+import de.htwg.se.setgame.model.ICard;
+public class Card implements ICard {
+	«FOR c : e.cardAttributes»
+	private String «c.name»;
+	«ENDFOR»
+	«FOR c : e.cardAttributes»
+	 /**
+	 * @return «c.name»
+	 */
+	@Override
+	public String get«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1) »(){
+		return this.«c.name»;
+	}
+    /**
+     *
+     * @param «c.name» of card
+     */
+    @Override
+    public void set«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»(String «c.name»){
+    	this. «c.name» =  «c.name»;
+	}
+    «ENDFOR»
+    /**
+	 * @param card 
+	 * @return true if card is the same
+	 */
+	@Override
+	public boolean compareTo(ICard card){
+		if («FOR c : e.cardAttributes SEPARATOR ' && '»
+		this.«c.name».equals(card.get«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1) »())«ENDFOR» ) {
+			return true;
+		}
+		return false;
+	}
+
+}
+
+'''
+
+	def servicegenerator(Attributes e) '''
+package de.htwg.se.setgame.controller.impl.service;
+
+import de.htwg.se.setgame.model.ICard;
+
+/**
+ * Created by raina on 17.06.2015.
+ */
+public class SetService {
+
+    public SetService() {
+
+    }
+
+    /**
+     * @param stringOne   color
+     * @param stringTwo   form
+     * @param stringThree filling
+     * @return
+     */
+    public boolean proveString(String stringOne, String stringTwo,
+                               String stringThree) {
+        if (stringOne.compareTo(stringTwo) == 0
+                && stringOne.compareTo(stringThree) == 0
+                && stringTwo.compareTo(stringThree) == 0) {
+            return true;
+        } else if (stringOne.compareTo(stringTwo) != 0
+                && stringOne.compareTo(stringThree) != 0
+                && stringTwo.compareTo(stringThree) != 0) {
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean isASet(ICard cardOne, ICard cardTwo, ICard cardThree) {
+		if («FOR c : e.cardAttributes SEPARATOR ' && '»proveString(cardOne.get«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»(), cardTwo.get«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»(), cardThree.get«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»() )«ENDFOR» ) {
+			return true;
+		}
+        return false;
+    }
+}
+
+'''
+
+	def fieldgenerator(Attributes e) '''
+package de.htwg.se.setgame.model.impl;
+
+import de.htwg.se.setgame.model.AField;
+import de.htwg.se.setgame.model.ICard;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+/**
+ * Class Field.
+ *
+ * @author David Simon & Raina Bertolini
+ * @date 7.12.201NUMBERFORONELINE
+ * @category Modell
+ */
+public class Field extends AField {
+    private static final int NUMBERFORONELINE = 3;
+    private static final int LEGHTFORSTRING = 10;
+    private Map<Integer, ICard> cardsInField;
+    private Set<Integer> listeofcontains;
+
+    public Field() {
+        this.cardsInField = new HashMap<Integer, ICard>();
+        this.listeofcontains = new TreeSet<Integer>();
+    }
+
+
+    @Override
+    public void setCardInField(Map<Integer, ICard> cardsInField) {
+        this.cardsInField = cardsInField;
+
+    }
+
+    @Override
+    public Map<Integer, ICard> getCardsInField() {
+        return cardsInField;
+    }
+
+    @Override
+    public String toString() {
+
+        return returnString();
+    }
+
+    private String returnApeend() {
+        return "|  ";
+    }
+
+    private String returnString() {
+        this.listeofcontains.clear();
+        StringBuilder fieldSB = new StringBuilder();
+        fieldSB.append("\n");
+        int t = 0;
+        while (t != cardsInField.size()) {
+            fieldSB.append(apendKeyInString()).append("\n");«FOR c : e.cardAttributes»
+            fieldSB.append(append«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»InString()).append("\n");«ENDFOR»
+            t++;
+            if (cardsInField.size() == listeofcontains.size()) {
+                break;
+            }
+        }
+        return fieldSB.toString();
+    }
+
+    private String apendKeyInString() {
+        StringBuilder fieldSB = new StringBuilder();
+        int i = 0;
+        for (Integer key : cardsInField.keySet()) {
+            if (!listeofcontains.contains(key)) {
+                double fehlt = LEGHTFORSTRING - 1;
+                double me = fehlt / 2;
+                fehlt = fehlt - me;
+                for (int loop = 0; loop < me; loop++) {
+                    fieldSB.append(" ");
+                }
+                fieldSB.append("[" + key + "]");
+                for (int loop = 0; loop < fehlt; loop++) {
+                    fieldSB.append(" ");
+                }
+                i++;
+                if (i == NUMBERFORONELINE) {
+                    i = 0;
+                    break;
+                }
+            }
+        }
+        return fieldSB.toString();
+    }«FOR c : e.cardAttributes»
+    private String append«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»InString() {
+   		int i = 0;
+   		StringBuilder fieldSB = new StringBuilder();
+   		for (Integer key : cardsInField.keySet()) {
+   			if (!listeofcontains.contains(key)) {
+	            int fehlt = LEGHTFORSTRING
+	                    - cardsInField.get(key).get«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»().toCharArray().length;
+	            int me = fehlt / 2;
+	            fehlt = fehlt - me;
+	            fieldSB.append("|");
+	            for (int loop = 0; loop < me; loop++) {
+	                fieldSB.append(" ");
+	            }
+	            fieldSB.append(cardsInField.get(key).get«Character.toUpperCase(c.name.charAt(0)) + c.name.toString.substring(1)»());
+	            for (int loop = 0; loop < fehlt; loop++) {
+	                fieldSB.append(" ");
+	            }
+	            fieldSB.append(returnApeend());
+	            i++;
+	            if (i == NUMBERFORONELINE) {
+	                i = 0;
+	                break;
+	            }
+	        }
+	    }
+	    return fieldSB.toString();
+	}«ENDFOR»
 }
 '''
 }

@@ -18,8 +18,8 @@ class EntitiesValidator extends AbstractEntitiesValidator {
 
 	@Check
 	def checkGreetingStartsWithCapital(CardAttribute greeting) {
-		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-			warning('Name should start with a capital', 
+		if (!Character.isLowerCase(greeting.name.charAt(0))) {
+			warning('Name should start with a low', 
 					EntitiesPackage.Literals.CARD_ATTRIBUTE__NAME,
 					INVALID_NAME)
 		}

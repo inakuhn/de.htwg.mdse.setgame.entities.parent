@@ -11,5 +11,8 @@ Attributes:
 
 CardAttribute:
 	name=ID '{'
-	(features+=STRING)+
+	(features+=Fearute)+
 	'}';
+
+Fearute:
+	name=ID;
